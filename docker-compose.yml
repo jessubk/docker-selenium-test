@@ -1,0 +1,50 @@
+version: "3.4"
+
+services:
+  chrome:
+    image: selenium/node-chrome:113.0.5672.63
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_GRID_URL=http://selenium-hub:4444/
+      - SE_VNC_NO_PASSWORD=1      
+    ports:
+      - "5900"
+
+  selenium-hub:
+    image: selenium/hub:4.8.2
+    shm_size: 3gb
+    ports:
+      - "4444"
+      
+  website.test:
+    build:
+      context: angular
+      dockerfile: Dockerfile
+      target: builder
+    ports:
+      - "4200"      
+    volumes:
+      - ./angular:/project
+      - /project/node_modules
+
+  specflow.selenium.test:
+    build:
+      dockerfile: SpecflowSeleniumTest/Dockerfile
+    environment:
+      WAIT_HOSTS: website.test:4200,selenium-hub:4444
+      WAIT_BEFORE: 10
+      WAIT_TIMEOUT: 50
+      WAIT_AFTER: 10
+      BrowserConfigurations__WebUrl: http://website.test:4200
+      BrowserConfigurations__ChromeSettings__SeleniumHubUri: http://selenium-hub:4444/wd/hub
+    ports:
+      - "37151"
+    depends_on:
+      - website.test
+      - chrome
+      - selenium-hub      
