@@ -23,9 +23,8 @@ services:
       
   website.test:
     build:
-      context: angular
+      context: aston-villa-app-master
       dockerfile: Dockerfile
-      target: builder
     ports:
       - "4200"      
     volumes:
