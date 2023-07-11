@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 
-FROM node:12.7-alpine AS build
+FROM node:12.7-alpine AS builder
 
 RUN mkdir /project
 WORKDIR /project
