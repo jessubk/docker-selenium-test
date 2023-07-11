@@ -34,6 +34,7 @@ services:
 
   specflow.selenium.test:
     build:
+      context: .
       dockerfile: SpecflowSeleniumTest/Dockerfile
     environment:
       WAIT_HOSTS: website.test:4200,selenium-hub:4444
